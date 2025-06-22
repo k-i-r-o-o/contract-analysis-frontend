@@ -50,3 +50,36 @@ jobs:
             --cluster $ECS_CLUSTER \
             --service $ECS_SERVICE \
             --force-new-deployment
+
+      # ✅ Notify via email on success
+      - name: Send success notification
+        if: success()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.SMTP_USER }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          subject: "✅ Deploy Success — ${{ github.repository }}"
+          to: ${{ github.event.head_commit.author.email }}
+          from: ${{ secrets.SMTP_USER }}
+          body: |
+            ✅ The frontend was successfully deployed to ECS cluster: ${{ env.ECS_CLUSTER }}
+            Service: ${{ env.ECS_SERVICE }}
+            Time: ${{ github.event.head_commit.timestamp }}
+
+      # ✅ Notify via email on failure
+      - name: Send failure notification
+        if: failure()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.SMTP_USER }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          subject: "❌ Deploy Failed — ${{ github.repository }}"
+          to: ${{ github.event.head_commit.author.email }}
+          from: ${{ secrets.SMTP_USER }}
+          body: |
+            ❌ The deployment failed.
+            Check the GitHub Actions run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
