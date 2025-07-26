@@ -1,0 +1,12 @@
+/build
+/.cert
+/.husky
+/.vite
+/node_modules/
+/public/lib/
+/public/locales/
+internals/generators/
+internals/scripts/
+package-lock.json/
+yarn.lock
+package.json 
